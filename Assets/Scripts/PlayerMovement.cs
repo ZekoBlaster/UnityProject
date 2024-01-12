@@ -8,16 +8,23 @@ public class PlayerMovement : MonoBehaviour
     public float jumpPower = 4;
     Rigidbody rb;
     CapsuleCollider col;
+    AudioSource audioSourceFootSteps;
+    AudioSource audioSourceJump;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
+       AudioSource[] audioSources = GetComponents<AudioSource>();
+        audioSourceFootSteps = audioSources[0];
+        audioSourceJump = audioSources[1];
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        footStepsActivation();
         float Horizontal = Input.GetAxis("Horizontal") * speed;
         float Vertical = Input.GetAxis("Vertical") * speed;
         Horizontal *= Time.deltaTime;
@@ -26,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isGrounded() && Input.GetButtonDown("Jump"))
         {
+            audioSourceJump.Play();
             rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
         }
         if (Input.GetKeyDown("escape"))
@@ -38,4 +46,24 @@ public class PlayerMovement : MonoBehaviour
     {
         return Physics.Raycast(transform.position, Vector3.down, col.bounds.extents.y + 0.1f);
     }
+
+    public void footStepsActivation()
+    {
+        if ((Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0) && isGrounded())
+        {
+            if (!audioSourceFootSteps.isPlaying)
+            {
+                audioSourceFootSteps.Play();
+            }
+        }
+        else
+        {
+            if (audioSourceFootSteps.isPlaying)
+            {
+                audioSourceFootSteps.Stop();
+            }
+        }
 }
+    }
+ 
+
