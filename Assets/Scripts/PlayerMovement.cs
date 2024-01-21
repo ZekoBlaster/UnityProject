@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     CapsuleCollider col;
     AudioSource audioSourceFootSteps;
     AudioSource audioSourceJump;
+    public TextMeshProUGUI lifeText;
+    private float life = 10.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
         }
+        
 
     }
     private bool isGrounded()
@@ -63,7 +68,19 @@ public class PlayerMovement : MonoBehaviour
                 audioSourceFootSteps.Stop();
             }
         }
+        if(life < 1)
+        {
+            SceneManager.LoadScene("YouDeadScene");
+        }
 }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Zombie"))
+        {
+            life -= 1;
+            lifeText.text = Mathf.Ceil(life).ToString();
+        }
     }
+}
  
 
